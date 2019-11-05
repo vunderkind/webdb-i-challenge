@@ -3,6 +3,10 @@ const db = require('./data/dbConfig.js');
 const server = express();
 server.use(express.json());
 
+server.get('/', (req, res)=> {
+    res.status(200).send("Hello!");
+})
+
 server.get('/api/:id', (req, res)=>{
     db('accounts')
     .where({id: req.params.id})
@@ -13,10 +17,10 @@ server.get('/api/:id', (req, res)=>{
 
 server.post('/api', (req, res) => {
 
-    const acctData = req.body;
-    (!acctData.name || !acctData.budget) ? res.status(400).json({ errorMessage: "Please provide name and budget for the account." }) :
+    const {name, budget} = req.body;
+    (!name || !budget) ? res.status(400).json({ errorMessage: "Please provide name and budget for the account." }) :
     db('accounts')
-        .insert(acctData, 'id')
+        .insert({name, budget}, 'id')
         .then(([id]) => {
             db('accounts')
                 .where({ id })
